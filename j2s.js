@@ -1,14 +1,42 @@
 'use strict'
 
+let fileContent
+const file2Read = 'jsonFile.json'
+// const options = {
+// 	headers: [
+// 		"id",
+// 		"title",
+// 		"some",
+// 	],
+// 	content: "text",
+// 	fileName: "title"
+// }
 const options = {
-	headers: [
-		"id",
-		"title",
-		"some",
-	],
-	content: "text",
-	fileName: "title"
+	headers: ["id", "name"],
+	content: "mail",
+	fileName: "id"
 }
+
+const file = require('fs')
+
+file.readFile(file2Read, 'utf8', function(err, data){
+	if(err){
+		console.log(err)
+		exit
+	}
+	// console.log(data)
+	fileContent = JSON.parse(data)
+	// console.log(data)	
+
+	fileContent.forEach(record => {
+		const response = saveRecords({record, options})
+		console.log( response?
+			`OK: The file ${options.fileName.split(' ').join('')} has been saved`:
+			`Error: On the file ${options.fileName.split(' ').join('')}`
+			)	
+	})
+
+})
 
 const RECORDS = [
 	{
@@ -43,17 +71,14 @@ function saveRecords({record, options={}}){
 		content += '---\n'
 	}
 	content += `\n${record[options.content]}\n`;
-	const file = require('fs')
-	file.writeFile(`${record[options.fileName].split(' ').join('')}.md`, content, function(err){
+	const file2Write = require('fs')
+	file2Write.writeFile(`${record[options.fileName]}.md`, content, function(err){
 		if(err){
 			console.log(err)
+			return err
 		}
 	})
-	return content
+	return true
 }
-
-RECORDS.forEach(record => {
-	console.log(saveRecords({record, options}))
-})
 
 console.log('Hey hey hey!')
